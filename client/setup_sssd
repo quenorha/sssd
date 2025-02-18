@@ -20,7 +20,7 @@ if [ $? -eq 0 ]; then
     if [ $? -eq 0 ]; then
        echo "IPK installation OK"
        while ! pidof sssd > /dev/null; do
-          echo "Waiting for Docker daemon to start..."
+          echo "Waiting for sssd to start..."
 		      sleep 5
 		   done
        /etc/init.d/sssd start
