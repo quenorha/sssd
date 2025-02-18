@@ -6,7 +6,7 @@ IP_ADDRESS=$1
 /etc/config-tools/config_sntp update-time=600
 /etc/config-tools/config_sntp state=enabled
 
-if grep -q "ldap.test.local" /etc/hosts; then
+if grep -q "$IP_ADDRESS ldap.test.local" /etc/hosts; then
   echo "ldap.test.local already in /etc/hosts file"
 else
   echo "$IP_ADDRESS ldap.test.local" >> "/etc/hosts"
@@ -20,17 +20,18 @@ if [ $? -eq 0 ]; then
     if [ $? -eq 0 ]; then
        echo "IPK installation OK"
        cp /root/client/sssd.conf /etc/sssd/sssd.conf
+       mkdir -p /etc/certs
        cp /root/client/rootCA.crt /etc/certs/rootCA.crt
 
        mkdir -p /var/run/sss/mc
        rm -r /var/lib/sss/mc/
-       ln -s /var/run/sss/mc /var/lib/sss/mc
+       ln -sf /var/run/sss/mc /var/lib/sss/mc
 
        cp /root/client/sssd /etc/init.d/sssd
        cp /root/client/nsswitch.conf /etc/nsswitch.conf
        cp /root/client/common-auth /etc/pam.d/common-auth
 
-       ln -s /etc/init.d/sssd /etc/rc.d/S99_sssd
+       ln -sf /etc/init.d/sssd /etc/rc.d/S99_sssd
 
        /etc/init.d/sssd restart
     else
