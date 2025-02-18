@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/server/*" -C ./
+curl -k -o /root/setup_server https://raw.githubusercontent.com/quenorha/sssd/refs/heads/main/server/example.ldif
 if [ $? -eq 0 ]; then
     echo "Download ldif file ok OK"
 
@@ -17,7 +17,7 @@ if [ $? -eq 0 ]; then
 	  --env LDAP_BASE_DN=dc=test,dc=local \
 	  --volume /root/data/slapd/database:/var/lib/ldap \
 	  --volume /root/data/slapd/config:/etc/ldap/slapd.d \
-	  --volume ./example.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif \
+	  --volume /root/example.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif \
 	  --detach osixia/openldap:latest --copy-service
 
 	echo "phpldapadmin installation"
