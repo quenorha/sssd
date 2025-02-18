@@ -13,7 +13,7 @@ else
   echo "ldap.test.local was added to /etc/hosts"
 fi
 
-curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "/root/client/*" -C ./
+curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/client/*" -C /root/client/
 if [ $? -eq 0 ]; then
     echo "Download OK"
     opkg install -V3 client/sssd_repo_1.0_FW04.06.01_28.repo
