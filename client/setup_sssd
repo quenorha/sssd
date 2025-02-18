@@ -1,0 +1,42 @@
+#!/bin/bash
+
+IP_ADDRESS=$1
+
+/etc/config-tools/config_sntp time-server-1=time.google.com
+/etc/config-tools/config_sntp update-time=600
+/etc/config-tools/config_sntp state=enabled
+
+if grep -q "ldap.test.local" /etc/hosts; then
+  echo "ldap.test.local already in /etc/hosts file"
+else
+  echo "$IP_ADDRESS ldap.test.local" >> "/etc/hosts"
+  echo "ldap.test.local was added to /etc/hosts"
+fi
+
+curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/client/*" -C ./
+if [ $? -eq 0 ]; then
+    echo "Download OK"
+    opkg install -V3 client/sssd_repo_1.0_FW04.06.01_28.repo
+    if [ $? -eq 0 ]; then
+       echo "IPK installation OK"
+       cp client/sssd.conf /etc/sssd/sssd.conf
+       cp client/rootCA.crt /etc/certs/rootCA.crt
+
+       mkdir -p /var/run/sss/mc
+       rm -r /var/lib/sss/mc/
+       ln -s /var/run/sss/mc /var/lib/sss/mc
+
+       cp client/sssd /etc/init.d/sssd
+       cp client/nsswitch.conf /etc/nsswitch.conf
+       cp client/common-auth /etc/pam.d/common-auth
+
+       ln -s /etc/init.d/sssd /etc/rc.d/S99_sssd
+
+       /etc/init.d/sssd restart
+    else
+      echo "IPK installation failed"
+    fi
+else
+    echo "Download Fail"
+fi
+
