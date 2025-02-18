@@ -1,6 +1,7 @@
 #!/bin/bash
 
-curl -k -o /root/setup_server https://raw.githubusercontent.com/quenorha/sssd/refs/heads/main/server/example.ldif
+curl -k -o /root/example.ldif https://raw.githubusercontent.com/quenorha/sssd/refs/heads/main/server/example.ldif
+
 if [ $? -eq 0 ]; then
     echo "Download ldif file ok OK"
 
