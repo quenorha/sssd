@@ -16,8 +16,18 @@ fi
 curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/client/*" -C /root/client/
 if [ $? -eq 0 ]; then
     echo "Download OK"
-    opkg install -V3 client/sssd_repo_1.0_FW04.06.01_28.repo
-    if [ $? -eq 0 ]; then
+    opkg install -V3 /root/client/sssd_repo_1.0_FW04.06.01_28.repo
+    echo "wait for installation"
+     while true; do
+      if [ -f "/etc/init.d/sssd" ]; then
+        echo "sssd installed"
+        break
+      else
+        echo "sssd not yet installed, wait 5s..."
+      fi
+      # 
+      sleep 5
+done
        echo "IPK installation OK"
        cp /root/client/sssd.conf /etc/sssd/sssd.conf
        mkdir -p /etc/certs
@@ -33,10 +43,7 @@ if [ $? -eq 0 ]; then
 
        ln -sf /etc/init.d/sssd /etc/rc.d/S99_sssd
 
-       /etc/init.d/sssd restart
-    else
-      echo "IPK installation failed"
-    fi
+       /etc/init.d/sssd start
 else
     echo "Download Fail"
 fi
