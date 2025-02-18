@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
     opkg install -V3 /root/client/sssd_repo_1.0_FW04.06.01_28.repo
     echo "wait for installation"
     while true; do
-      # command=$(opkg list_installed | grep "sssd_repo")
+      # command=$(opkg list_installed | grep -q "sssd";)
       if $COMMAND ; then
       echo "sssd installed"
       break
