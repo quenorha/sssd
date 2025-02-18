@@ -43,7 +43,7 @@ done
 
        ln -sf /etc/init.d/sssd /etc/rc.d/S99_sssd
 
-       /etc/init.d/sssd restart
+       /etc/init.d/sssd start
 else
     echo "Download Fail"
 fi
