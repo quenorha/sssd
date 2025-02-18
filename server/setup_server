@@ -1,0 +1,36 @@
+#!/bin/bash
+
+curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/server/*" -C ./
+if [ $? -eq 0 ]; then
+    echo "Download ldif file ok OK"
+
+    echo "openldap server installation"
+	docker run \
+	 --name openldap-server \
+	 -p 389:389 \
+	 -p 636:636 \
+	 --hostname ldap.test.local \
+	 --env LDAP_ORGANISATION=WAGO \
+	 --env LDAP_TLS_VERIFY_CLIENT=try \
+	 --env LDAP_DOMAIN=test.local \
+	 --env LDAP_ADMIN_PASSWORD=wagowago \
+	  --env LDAP_BASE_DN=dc=test,dc=local \
+	  --volume /root/data/slapd/database:/var/lib/ldap \
+	  --volume /root/data/slapd/config:/etc/ldap/slapd.d \
+	  --volume ./example.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif \
+	  --detach osixia/openldap:latest --copy-service
+
+	echo "phpldapadmin installation"
+	docker run  \
+	   --name phpldapadmin  \
+	   -p 10080:80 \
+	   -p 10443:443 \
+	   --hostname phpldapadmin-service \
+	   --link openldap-server:ldap-host  \
+	   --env PHPLDAPADMIN_LDAP_HOSTS=ldap-host  \
+	   --detach osixia/phpldapadmin:latest
+
+    echo "database creation"
+	docker exec -ti openldap-server ldapadd -x -D "cn=admin,dc=test,dc=local" -w wagowago -H ldap://ldap.test.local -f /container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+
+fi

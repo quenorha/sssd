@@ -1,0 +1,80 @@
+version: 1
+
+# Entry 1: ou=people,dc=test,dc=local
+dn: ou=people,dc=test,dc=local
+objectclass: organizationalUnit
+objectclass: top
+ou: people
+
+# Entry 2: cn=user1,ou=people,dc=test,dc=local
+dn: cn=user1,ou=people,dc=test,dc=local
+cn:  user1
+gidnumber: 132
+homedirectory: /home/user1
+loginshell: /bin/bash
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: user1
+uid: user1
+uidnumber: 10000
+userpassword: {SSHA}ajprhigENjX7uezTwjxBHbksgeHN/WI5
+
+# Entry 3: cn=user2,ou=people,dc=test,dc=local
+dn: cn=user2,ou=people,dc=test,dc=local
+cn:  user2
+gidnumber: 132
+homedirectory: /home/user2
+loginshell: /bin/false
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: user2
+uid: user2
+uidnumber: 10001
+userpassword: {SSHA}ajprhigENjX7uezTwjxBHbksgeHN/WI5
+
+# Entry 4: ou=unixgroups,dc=test,dc=local
+dn: ou=unixgroups,dc=test,dc=local
+objectclass: organizationalUnit
+objectclass: top
+ou: unixgroups
+
+# Entry 5: cn=fwupdate,ou=unixgroups,dc=test,dc=local
+dn: cn=fwupdate,ou=unixgroups,dc=test,dc=local
+cn: fwupdate
+gidnumber: 233
+objectclass: posixGroup
+objectclass: top
+
+# Entry 6: cn=wagoupload,ou=unixgroups,dc=test,dc=local
+dn: cn=wagoupload,ou=unixgroups,dc=test,dc=local
+cn: wagoupload
+gidnumber: 234
+objectclass: posixGroup
+objectclass: top
+
+# Entry 7: cn=wbm,ou=unixgroups,dc=test,dc=local
+dn: cn=wbm,ou=unixgroups,dc=test,dc=local
+cn: wbm
+gidnumber: 132
+memberuid: user1
+memberuid: user2
+objectclass: posixGroup
+objectclass: top
+
+# Entry 8: cn=wbmadmin,ou=unixgroups,dc=test,dc=local
+dn: cn=wbmadmin,ou=unixgroups,dc=test,dc=local
+cn: wbmadmin
+gidnumber: 131
+memberuid: user1
+memberuid: user2
+objectclass: posixGroup
+objectclass: top
+
+# Entry 9: cn=wbmuser,ou=unixgroups,dc=test,dc=local
+dn: cn=wbmuser,ou=unixgroups,dc=test,dc=local
+cn: wbmuser
+gidnumber: 130
+objectclass: posixGroup
+objectclass: top
