@@ -22,7 +22,7 @@ if [ $? -eq 0 ]; then
        while ! pidof sssd > /dev/null; do
           echo "Waiting for sssd to start..."
 		      sleep 5
-		   done
+       done
        /etc/init.d/sssd start
        cp /root/client/sssd.conf /etc/sssd/sssd.conf
        mkdir -p /etc/certs
