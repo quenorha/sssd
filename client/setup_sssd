@@ -17,6 +17,8 @@ curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wi
 if [ $? -eq 0 ]; then
     echo "Download OK"
     opkg install -V3 /root/client/sssd_repo_1.0_FW04.06.01_28.repo
+    sleep 15
+    echo "wait 15s for installation"
     if [ $? -eq 0 ]; then
        echo "IPK installation OK"
        cp /root/client/sssd.conf /etc/sssd/sssd.conf
