@@ -2,6 +2,48 @@
 
 IP_ADDRESS=$1
 
+ ORDER="$(/etc/config-tools/get_typelabel_value ORDER)"
+
+ if [ "${ORDER:4:2}" == "81" ]
+    then
+        PRODUCT="PFC100"
+    elif [ "${ORDER:0:3}" == "762" ] || [ "${ORDER:0:5}" == "752-8" ]
+    then
+      if [ "${ORDER:4:1}" == "3" ]
+      then
+        PRODUCT="WP400"
+      else
+        PRODUCT="TP600"
+      fi
+    elif [ "${ORDER:0:5}" == "751-9" ]
+    then
+      PRODUCT="CC100"
+    elif [ "${ORDER:4:2}" == "83" ]
+    then
+      PRODUCT="PFC300"
+    elif [ "${ORDER:4:2}" == "82" ]
+    then
+        # default
+        PRODUCT="PFC200"
+fi
+  echo "$PRODUCT"
+
+if [ $PRODUCT = CC100 ] || [ $PRODUCT = PFC100 ] || [ $PRODUCT = PFC200 ]
+then
+
+PACKAGE="sssd_repo_1.0_FW04.06.01_28.repo"
+
+elif [ $PRODUCT = WP400 ]
+then
+
+PACKAGE="sssd_repo_1.0_FW04.07.00_00.repo"
+
+else
+   echo "no compatible packages available. Abort."
+   exit
+fi
+
+
 /etc/config-tools/config_sntp time-server-1=time.google.com
 /etc/config-tools/config_sntp update-time=600
 /etc/config-tools/config_sntp state=enabled
@@ -13,10 +55,12 @@ else
   echo "ldap.test.local was added to /etc/hosts"
 fi
 
-curl -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/client/*" -C /root/client/
+curl -k -L "https://github.com/quenorha/sssd/tarball/main" | tar -xz --strip=1 --wildcards "*/client/*"
 if [ $? -eq 0 ]; then
     echo "Download OK"
-    opkg install -V3 /root/client/sssd_repo_1.0_FW04.06.01_28.repo
+    
+    
+    opkg install -V3 "/root/client/packages/$PACKAGE"
     echo "wait for installation"
      while true; do
       if [ -f "/etc/init.d/sssd" ]; then
@@ -29,17 +73,17 @@ if [ $? -eq 0 ]; then
       sleep 5
 done
        echo "IPK installation OK"
-       cp /root/client/sssd.conf /etc/sssd/sssd.conf
+       cp /root/client/dependencies/sssd.conf /etc/sssd/sssd.conf
        mkdir -p /etc/certs
-       cp /root/client/rootCA.crt /etc/certs/rootCA.crt
+       cp /root/client/dependencies/rootCA.crt /etc/certs/rootCA.crt
 
        mkdir -p /var/run/sss/mc
        rm -r /var/lib/sss/mc/
        ln -sf /var/run/sss/mc /var/lib/sss/mc
 
-       cp /root/client/sssd /etc/init.d/sssd
-       cp /root/client/nsswitch.conf /etc/nsswitch.conf
-       cp /root/client/common-auth /etc/pam.d/common-auth
+       cp /root/client/dependencies/sssd /etc/init.d/sssd
+       cp /root/client/dependencies/nsswitch.conf /etc/nsswitch.conf
+       cp /root/client/dependencies/common-auth /etc/pam.d/common-auth
 
        ln -sf /etc/init.d/sssd /etc/rc.d/S99_sssd
 
