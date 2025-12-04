@@ -31,7 +31,7 @@ fi
 if [ $PRODUCT = CC100 ] || [ $PRODUCT = PFC100 ] || [ $PRODUCT = PFC200 ]
 then
 
-PACKAGE="sssd_repo_1.0_FW04.06.01_28.repo"
+PACKAGE="sssd_repo_1.0_FW04.08.09_99.repo"
 
 elif [ $PRODUCT = WP400 ]
 then
